@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="bg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>Радиолюбител клас 2</title>
+    <!-- MDB icon -->
+    <link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon" />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"
+    />
+    <!-- Google Fonts Roboto -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+    />
+    <!-- MDB -->
+    <link rel="stylesheet" href="css/mdb.min.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar fixed-top navbar-light bg-light">
+      <div class="d-flex flex-row">
+        <div id="question-counter" class="mx-2">-</div>
+      </div>
+    </nav>
+    <!-- Navbar -->
+
+    <!-- Question with answers -->
+    <div id="question-container" class="container" style="margin-top: 58px;">
+      <div class="question-holder row">
+        <div class="col-12">
+          <h1 id="question">Място за всички важни въпроси?</h1>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <div class="answer-container card">
+            <p class="answer-prefix">А</p>
+            <p class="answer-text" data-answer="А">Отговор А</p>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="answer-container card">
+            <p class="answer-prefix">Б</p>
+            <p class="answer-text" data-answer="Б">Отговор Б</p>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="answer-container card">
+            <p class="answer-prefix">В</p>
+            <p class="answer-text" data-answer="В">Отговор В</p>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="answer-container card">
+            <p class="answer-prefix">Г</p>
+            <p class="answer-text" data-answer="Г">Отговор Г</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Question with answers -->
+
+    <!-- Study section finish -->
+    <div id="study-finish-container" class="container d-none" style="margin-top: 58px;">
+      <div class="result-title row">
+        <div class="col-12">
+          <h1 id="study-finish-title">Поздравления ...</h1>
+        </div>
+        <div class="col-12">
+          <a class="btn text-white" style="background-color: #0eaedf;" href="index.html" role="button">
+            <i class="fas fa-home me-2"></i>
+            Начало
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- Study section finish -->
+
+    <!-- Test result -->
+    <div id="test-result-container" class="container d-none" style="margin-top: 58px;">
+      <div class="result-title row">
+        <div class="col-12">
+          <h1 id="test-result-title">Поздравления ...</h1>
+        </div>
+
+        <div class="col-12">
+          <a class="btn text-white" style="background-color: #0eaedf;" href="index.html" role="button">
+            <i class="fas fa-home me-2"></i>
+            Начало
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- Test result -->
+
+    <!-- MDB -->
+    <script type="text/javascript" src="js/mdb.min.js"></script>
+    <!-- Custom scripts -->
+    <script src="js/scripts.js"></script>
+    <script>
+      const question = document.getElementById("question");
+      const answers = Array.from(document.getElementsByClassName("answer-text"));
+      const questionCounterText = document.getElementById("question-counter");
+      const restart = document.getElementById("restart");
+
+      let acceptAswerClick = false;
+      let TestObj = null;
+
+      const showNextQuestion = () => {
+          current_question = TestObj.get_current_question();
+          questionCounterText.innerHTML = `${TestObj.current_question_idx + 1}/${TestObj.questions.length}`;
+          question.innerHTML = current_question.question;
+
+          answers.forEach((answer) => {
+            answer.innerHTML = current_question[answer.dataset["answer"]];
+          });
+          acceptAswerClick = true;
+
+          answers.forEach((answer) => {
+            answer.addEventListener("click", (e) => {
+              if (!acceptAswerClick) {
+                return;
+              }
+              acceptAswerClick = false;
+              const clickedAnswer = e.target;
+              const anwseredLetter = clickedAnswer.dataset["answer"];
+
+              let classToApply = "incorrect";
+              if (anwseredLetter === current_question.answer) {
+                classToApply = "correct";
+              }
+
+              if (TestObj instanceof HamTest)
+              {
+                TestObj.store_answer(anwseredLetter);
+              }
+
+              clickedAnswer.parentElement.classList.add(classToApply);
+
+              setTimeout(() => {
+                clickedAnswer.parentElement.classList.remove(classToApply);
+                
+                if ((TestObj instanceof HamStudy) && (anwseredLetter != current_question.answer)) {
+                  acceptAswerClick = true;
+                } else {
+                  if ((TestObj.current_question_idx + 1) < TestObj.questions.length) {
+                    TestObj.current_question_idx += 1;
+                    showNextQuestion();
+                  } else {
+                    displayResults();
+                  }
+                }
+              }, 1000);
+            });
+          });
+        };
+
+        const page_init = () => {
+          const queryString = window.location.search;
+          const urlParams = new URLSearchParams(queryString);
+
+          let ham_class = (urlParams.has('class')) ? parseInt(urlParams.get('class')) : 2;
+          if (ham_class < 1 || ham_class > 2) {
+            ham_class = 2;
+          }
+
+          let mode = (urlParams.get('mode') === 'test') ? 'test' : 'study';
+          
+          if (mode === 'study') {
+            let exam_section = (urlParams.has('section')) ? parseInt(urlParams.get('section')) : 1;
+            if (exam_section < 1 || exam_section > 3) {
+              exam_section = 1;
+            }
+            TestObj = new HamStudy(ham_class, exam_section, false);
+            document.title = "Клас " + ham_class + " Раздел " + exam_section + " - самоподготовка";
+          } else {
+            TestObj = new HamTest(ham_class);
+            document.title = "Радиолюбител Клас " + ham_class + "примерен тест";
+          }
+          showNextQuestion();
+        }
+
+        displayResults = () => {
+          acceptAswerClick = false;
+          document.getElementById("question-container").classList.add('d-none');
+
+          if (TestObj instanceof HamStudy) {
+            document.getElementById("study-finish-title").innerHTML = "Поздравления!<br />Вие преминахте всички въпроси от Раздел " + TestObj.exam_section + "!";
+            document.getElementById("study-finish-container").classList.remove('d-none');
+            return;
+          }
+
+          if (TestObj instanceof HamTest) {
+            // build report ...
+            let score = TestObj.score;
+            let test_result_title = document.getElementById("test-result-title");
+            
+            if (score >= 48) { // pass
+              test_result_title.innerHTML = "Поздравления, <br />Вашият резултат е " + score + " / 60";
+            } else { // fail
+              test_result_title.innerHTML = "За съжаление Вашият резултат е само " + score + " / 60";
+            }
+            document.getElementById("test-result-container").classList.remove('d-none');
+            return;
+          }
+
+        };
+
+        page_init();
+    </script>
+  </body>
+</html>

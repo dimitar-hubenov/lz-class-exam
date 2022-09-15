@@ -14,13 +14,13 @@ h1 {
   font-size: 1rem;
 }
 
-#counter,
 #score {
   text-align: center;
 }
 
+.result-title,
 .question-holder {
-  height: 10rem;
+  min-height: 10rem;
   display: flex;
   text-align: center;
   align-items: center;
