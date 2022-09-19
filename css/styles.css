@@ -4,23 +4,17 @@ h1 {
   background-color: #eee;
 }
 
-#intro {
-  display: flex;
-  justify-content: space-between;
+#question-counter {
+  font-weight: bold;
 }
 
-.prefix {
-  text-align: center;
-  font-size: 1rem;
+#question-container {
+  margin-top: 48px;
+  margin-bottom: 48px;
 }
 
-#score {
-  text-align: center;
-}
-
-.result-title,
 .question-holder {
-  min-height: 10rem;
+  padding: 1.0rem 1.0rem;
   display: flex;
   text-align: center;
   align-items: center;
@@ -29,29 +23,41 @@ h1 {
 .answer-container {
   display: flex;
   flex-direction: initial;
-  margin-bottom: 0.5rem;
-  font-size: 1.5rem;
+  margin-bottom: 0.6rem;
+  font-size: 1.3rem;
+}
+
+@media (hover: hover) {
+  .answer-container:hover {
+    cursor: pointer;
+    box-shadow: 0 0.4rem 1.4rem 0 rgba(86, 185, 235, 0.5);
+    transform: translateY(-0.1rem);
+    transition: transform 200ms;
+  }
+}
+
+@media (hover: none) {
+  .answer-container:active {
+    cursor: pointer;
+    box-shadow: 0 0.4rem 1.4rem 0 rgba(86, 185, 235, 0.5);
+    transform: translateY(-0.1rem);
+    transition: transform 20ms;
+  }
 }
 
 .answer-prefix {
   background-color: #0eaedf;
   color: white;
-  padding: 1.5rem 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 1.2rem 1.2rem;
   margin: 0;
 }
 
 .answer-text {
-  padding: 1.5rem;
+  padding: 1.2rem 1.2rem;
   width: 100%;
   margin: 0;
-}
-
-.answer-container:hover {
-  cursor: pointer;
-  box-shadow: 0 0.4rem 1.4rem 0 rgba(86, 185, 235, 0.5);
-
-  transform: translateY(-0.1rem);
-  transition: transform 200ms;
 }
 
 .correct {
@@ -60,4 +66,12 @@ h1 {
 
 .incorrect {
   background-color: lightpink;
+}
+
+
+.result-title {
+  padding: 0.0rem 1.0rem;
+  display: flex;
+  text-align: center;
+  align-items: center;
 }

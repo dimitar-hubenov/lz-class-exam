@@ -34,7 +34,7 @@
     <!-- Navbar -->
 
     <!-- Question with answers -->
-    <div id="question-container" class="container" style="margin-top: 58px;">
+    <div id="question-container" class="container">
       <div class="question-holder row">
         <div class="col-12">
           <h1 id="question">Място за всички важни въпроси?</h1>
@@ -114,9 +114,15 @@
     <!-- Custom scripts -->
     <script src="js/scripts.js"></script>
     <script>
+      const questionCounter = document.getElementById("question-counter");
+      const questionContainer = document.getElementById("question-container");
+
+
+
+
       const question = document.getElementById("question");
       const answers = Array.from(document.getElementsByClassName("answer-text"));
-      const questionCounterText = document.getElementById("question-counter");
+      
       const restart = document.getElementById("restart");
 
       let acceptAswerClick = false;
@@ -124,8 +130,12 @@
 
       const showNextQuestion = () => {
           current_question = TestObj.get_current_question();
-          questionCounterText.innerHTML = `${TestObj.current_question_idx + 1}/${TestObj.questions.length}`;
+          questionCounter.innerHTML = `${TestObj.current_question_idx + 1}/${TestObj.questions.length}`;
           question.innerHTML = current_question.question;
+          
+          // scroll to top
+          document.body.scrollTop = 0; // For Safari
+          document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
 
           answers.forEach((answer) => {
             answer.innerHTML = current_question[answer.dataset["answer"]];
