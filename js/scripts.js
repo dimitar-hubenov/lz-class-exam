@@ -78,8 +78,6 @@ class HamStudy extends HamQSet {
         } else {
             this.questions = HamTest.load_questions(ham_class, exam_section);
         }
-
-        this._current_question_idx = 45;
     }
 }
 
