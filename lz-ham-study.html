@@ -1,29 +1,24 @@
 <!DOCTYPE html>
 <html lang="bg">
+
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>Радиолюбител клас 2</title>
+    <title>Подготовка за радиолюбител</title>
     <!-- MDB icon -->
     <link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon" />
     <!-- Font Awesome -->
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"
-    />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" />
     <!-- Google Fonts Roboto -->
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
-    />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" />
     <!-- MDB -->
     <link rel="stylesheet" href="css/mdb.min.css" />
     <link rel="stylesheet" href="css/styles.css" />
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   </head>
+
   <body>
     <!-- Navbar -->
     <nav class="navbar fixed-top navbar-light bg-light">
@@ -116,123 +111,119 @@
     <script>
       const questionCounter = document.getElementById("question-counter");
       const questionContainer = document.getElementById("question-container");
-
-
-
-
       const question = document.getElementById("question");
       const answers = Array.from(document.getElementsByClassName("answer-text"));
-      
+
       const restart = document.getElementById("restart");
 
       let acceptAswerClick = false;
       let TestObj = null;
 
       const showNextQuestion = () => {
-          current_question = TestObj.get_current_question();
-          questionCounter.innerHTML = `${TestObj.current_question_idx + 1}/${TestObj.questions.length}`;
-          question.innerHTML = current_question.question;
-          
-          // scroll to top
-          document.body.scrollTop = 0; // For Safari
-          document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+        current_question = TestObj.get_current_question();
+        questionCounter.innerHTML = `${TestObj.current_question_idx + 1}/${TestObj.questions.length}`;
+        question.innerHTML = current_question.question;
 
-          answers.forEach((answer) => {
-            answer.innerHTML = current_question[answer.dataset["answer"]];
-          });
-          acceptAswerClick = true;
+        // scroll to top
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
 
-          answers.forEach((answer) => {
-            answer.addEventListener("click", (e) => {
-              if (!acceptAswerClick) {
-                return;
-              }
-              acceptAswerClick = false;
-              const clickedAnswer = e.target;
-              const anwseredLetter = clickedAnswer.dataset["answer"];
+        answers.forEach((answer) => {
+          answer.innerHTML = current_question[answer.dataset["answer"]];
+        });
 
-              let classToApply = "incorrect";
-              if (anwseredLetter === current_question.answer) {
-                classToApply = "correct";
-              }
-
-              if (TestObj instanceof HamTest)
-              {
-                TestObj.store_answer(anwseredLetter);
-              }
-
-              clickedAnswer.parentElement.classList.add(classToApply);
-
-              setTimeout(() => {
-                clickedAnswer.parentElement.classList.remove(classToApply);
-                
-                if ((TestObj instanceof HamStudy) && (anwseredLetter != current_question.answer)) {
-                  acceptAswerClick = true;
-                } else {
-                  if ((TestObj.current_question_idx + 1) < TestObj.questions.length) {
-                    TestObj.current_question_idx += 1;
-                    showNextQuestion();
-                  } else {
-                    displayResults();
-                  }
-                }
-              }, 1000);
-            });
-          });
-        };
-
-        const page_init = () => {
-          const queryString = window.location.search;
-          const urlParams = new URLSearchParams(queryString);
-
-          let ham_class = (urlParams.has('class')) ? parseInt(urlParams.get('class')) : 2;
-          if (ham_class < 1 || ham_class > 2) {
-            ham_class = 2;
-          }
-
-          let mode = (urlParams.get('mode') === 'test') ? 'test' : 'study';
-          
-          if (mode === 'study') {
-            let exam_section = (urlParams.has('section')) ? parseInt(urlParams.get('section')) : 1;
-            if (exam_section < 1 || exam_section > 3) {
-              exam_section = 1;
+        answers.forEach((answer) => {
+          answer.addEventListener("click", (e) => {
+            if (!acceptAswerClick) {
+              return;
             }
-            TestObj = new HamStudy(ham_class, exam_section, false);
-            document.title = "Клас " + ham_class + " Раздел " + exam_section + " - самоподготовка";
-          } else {
-            TestObj = new HamTest(ham_class);
-            document.title = "Радиолюбител Клас " + ham_class + "примерен тест";
-          }
-          showNextQuestion();
+            acceptAswerClick = false;
+            const clickedAnswer = e.currentTarget;
+            const anwseredLetter = clickedAnswer.dataset["answer"];
+
+            let classToApply = "incorrect";
+            if (anwseredLetter === current_question.answer) {
+              classToApply = "correct";
+            }
+
+            if (TestObj instanceof HamTest) {
+              TestObj.store_answer(anwseredLetter);
+            }
+
+            clickedAnswer.parentElement.classList.add(classToApply);
+
+            setTimeout(() => {
+              clickedAnswer.parentElement.classList.remove(classToApply);
+
+              if ((TestObj instanceof HamStudy) && (anwseredLetter != current_question.answer)) {
+                acceptAswerClick = true;
+              } else {
+                if ((TestObj.current_question_idx + 1) < TestObj.questions.length) {
+                  TestObj.current_question_idx += 1;
+                  showNextQuestion();
+                } else {
+                  displayResults();
+                }
+              }
+            }, 1000);
+          });
+        });
+        acceptAswerClick = true;
+      };
+
+      const page_init = () => {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+
+        let ham_class = (urlParams.has('class')) ? parseInt(urlParams.get('class')) : 2;
+        if (ham_class < 1 || ham_class > 2) {
+          ham_class = 2;
         }
 
-        displayResults = () => {
-          acceptAswerClick = false;
-          document.getElementById("question-container").classList.add('d-none');
+        let mode = (urlParams.get('mode') === 'test') ? 'test' : 'study';
 
-          if (TestObj instanceof HamStudy) {
-            document.getElementById("study-finish-title").innerHTML = "Поздравления!<br />Вие преминахте всички въпроси от Раздел " + TestObj.exam_section + "!";
-            document.getElementById("study-finish-container").classList.remove('d-none');
-            return;
+        if (mode === 'study') {
+          let exam_section = (urlParams.has('section')) ? parseInt(urlParams.get('section')) : 1;
+          if (exam_section < 1 || exam_section > 3) {
+            exam_section = 1;
           }
+          TestObj = new HamStudy(ham_class, exam_section, false);
+          document.title = "Клас " + ham_class + " Раздел " + exam_section + " - самоподготовка";
+        } else {
+          TestObj = new HamTest(ham_class);
+          document.title = "Радиолюбител Клас " + ham_class + "примерен тест";
+        }
+        showNextQuestion();
+      }
 
-          if (TestObj instanceof HamTest) {
-            // build report ...
-            let score = TestObj.score;
-            let test_result_title = document.getElementById("test-result-title");
-            
-            if (score >= 48) { // pass
-              test_result_title.innerHTML = "Поздравления, <br />Вашият резултат е " + score + " / 60";
-            } else { // fail
-              test_result_title.innerHTML = "За съжаление Вашият резултат е само " + score + " / 60";
-            }
-            document.getElementById("test-result-container").classList.remove('d-none');
-            return;
+      displayResults = () => {
+        acceptAswerClick = false;
+        document.getElementById("question-container").classList.add('d-none');
+
+        if (TestObj instanceof HamStudy) {
+          document.getElementById("study-finish-title").innerHTML = "Поздравления!<br />Вие преминахте всички въпроси от Раздел " + TestObj.exam_section + "!";
+          document.getElementById("study-finish-container").classList.remove('d-none');
+          return;
+        }
+
+        if (TestObj instanceof HamTest) {
+          // build report ...
+          let score = TestObj.score;
+          let test_result_title = document.getElementById("test-result-title");
+
+          if (score >= 48) { // pass
+            test_result_title.innerHTML = "Поздравления, <br />Вашият резултат е " + score + " / 60";
+          } else { // fail
+            test_result_title.innerHTML = "За съжаление Вашият резултат е само " + score + " / 60";
           }
+          document.getElementById("test-result-container").classList.remove('d-none');
+          return;
+        }
 
-        };
+      };
 
-        page_init();
+      page_init();
     </script>
   </body>
+
 </html>
