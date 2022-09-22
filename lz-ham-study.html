@@ -16,7 +16,17 @@
     <link rel="stylesheet" href="css/mdb.min.css" />
     <link rel="stylesheet" href="css/styles.css" />
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']]
+        },
+        svg: {
+          fontCache: 'global'
+        }
+      };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
   </head>
 
   <body>
@@ -131,6 +141,7 @@
         answers.forEach((answer) => {
           answer.innerHTML = current_question[answer.dataset["answer"]];
         });
+        MathJax.typeset();
 
         answers.forEach((answer) => {
           answer.addEventListener("click", (e) => {
@@ -154,6 +165,7 @@
 
             setTimeout(() => {
               clickedAnswer.parentElement.classList.remove(classToApply);
+              MathJax.typesetClear();
 
               if ((TestObj instanceof HamStudy) && (anwseredLetter != current_question.answer)) {
                 acceptAswerClick = true;
